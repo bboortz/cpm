@@ -20,6 +20,8 @@ def read(fname):
 setup(
     use_scm_version=True,
     setup_requires=['setuptools_scm'],
+    install_requires=['setuptools_scm'],
+    dependency_links=['https://github.com/pypa/setuptools_scm/archive/v1.11.1.zip'],
     name = __projname__,
     version = __projver__,
     author = "Benjamin Boortz",
