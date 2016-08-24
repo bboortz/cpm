@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-
+from cpm import __projname__, __projdesc__
 import argparse
 import json
 
@@ -57,10 +57,14 @@ class jsonprint(object):
 
 
 
-
-parser = argparse.ArgumentParser(prog=progname, description='Curl like tool for json data.')
-parser.add_argument('-e', '--extract-element', dest='extract_element', help='extract an element')
-parser.add_argument('URL', help='the url to request')
+parser = argparse.ArgumentParser(prog=__projname__, description=__projdesc__)
+parser.add_argument('-g', '--global')
+subparsers = parser.add_subparsers(dest="subparser_name") # this line changed
+build_parser = subparsers.add_parser('build', help='build a package')
+build_parser.add_argument('-c', '--config-file', dest='config_file', help='specify the config file')
+build_parser.add_argument('-d', '--directory', dest='directory', help='specify the image directory')
+install_parser = subparsers.add_parser('install', help='install a package')
+install_parser.add_argument('CONTAINER', help='the container to install')
 args = vars( parser.parse_args() )
 
 
@@ -69,7 +73,7 @@ jp = jsonprint()
 
 
 
-json_data = jc.get_jsonparsed_data( args['URL'] )
+#json_data = jc.get_jsonparsed_data( args['URL'] )
 if args['extract_element']:
     jp.pprint(json_data, args['extract_element'] )
 else:
