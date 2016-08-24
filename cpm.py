@@ -1,12 +1,20 @@
 #!/usr/bin/env python3
 
+
 import os
 import sys
 import argparse
+from setuptools_scm import get_version
 from cpm import __projname__, __projver__, __projdesc__
 from cpm.cmd.build import build
 from cpm.cmd.install import install
 from cpm.cmd.run import run
+
+
+#
+# * scm version *
+#
+scm_version = get_version()
 
 
 #
@@ -17,7 +25,7 @@ from cpm.cmd.run import run
 # define the parser arguments
 parser = argparse.ArgumentParser(prog=__projname__, description=__projdesc__)
 #from _version import __version__
-parser.add_argument('-V', '--version', action='version', version='%(prog)s {version}'.format(version=__projver__))
+parser.add_argument('-V', '--version', action='version', version='%(prog)s {version} ({scm_version})'.format(version=__projver__, scm_version=scm_version))
 subparsers = parser.add_subparsers(dest="subparser_name") # this line changed
 build_parser = subparsers.add_parser('build', help='build a package')
 build_parser.add_argument('-c', '--config-file', dest='config_file', help='specify the config file')
