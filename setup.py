@@ -16,7 +16,10 @@ from cpm import __projname__, __projver__, __projdesc__
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+
 setup(
+    use_scm_version=True,
+    setup_requires=['setuptools_scm'],
     name = __projname__,
     version = __projver__,
     author = "Benjamin Boortz",
@@ -32,6 +35,7 @@ setup(
         "Environment :: Console",
         "Topic :: Utilities",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Programming Language :: Python",
     ],
     test_suite = "cpm.tests.test_all",
 )
