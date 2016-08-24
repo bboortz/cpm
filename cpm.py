@@ -1,81 +1,61 @@
 #!/usr/bin/env python3
 
-from cpm import __projname__, __projdesc__
+import os
+import sys
 import argparse
-import json
-
-try:
-    # For Python 3.0 and later
-    from urllib.request import urlopen
-except ImportError:
-    # Fall back to Python 2's urllib2
-    from urllib2 import urlopen
+from cpm import __projname__, __projver__, __projdesc__
+from cpm.cmd.build import build
+from cpm.cmd.install import install
+from cpm.cmd.run import run
 
 
-progname = "jsoncurl"
+#
+# * parse arguments *
+#
 
 
-
-class jsoncurl(object):
-
-    def __init__(self):
-        pass
-
-    def get_jsonparsed_data(self, url):
-        """Receive the content of ``url``, parse it as JSON and return the
-           object.
-        """
-
-        response = urlopen(url)
-        data = response.read().decode()
-        #return data
-        #return json.dumps(data)
-        return json.loads(data)
-
-class jsonprint(object):
-
-    def __init__(self):
-        pass
-
-    def uprint(self, json_data, element=None):
-        if element == None:
-            print(json_data)
-        else:
-            try:
-                print(json_data[element])
-            except KeyError:
-                print("element <%s> not found in json" % element)
-
-    def pprint(self, json_data, element=None):
-        if element == None:
-            print( json.dumps(json_data, sort_keys=True, indent=4) )
-        else:
-            try:
-                print( json.dumps(json_data[element], sort_keys=True, indent=4) )
-            except KeyError:
-                print("element <%s> not found in json" % element)
-
-
-
+# define the parser arguments
 parser = argparse.ArgumentParser(prog=__projname__, description=__projdesc__)
-parser.add_argument('-g', '--global')
+#from _version import __version__
+parser.add_argument('-V', '--version', action='version', version='%(prog)s {version}'.format(version=__projver__))
 subparsers = parser.add_subparsers(dest="subparser_name") # this line changed
 build_parser = subparsers.add_parser('build', help='build a package')
 build_parser.add_argument('-c', '--config-file', dest='config_file', help='specify the config file')
 build_parser.add_argument('-d', '--directory', dest='directory', help='specify the image directory')
 install_parser = subparsers.add_parser('install', help='install a package')
 install_parser.add_argument('CONTAINER', help='the container to install')
+run_parser = subparsers.add_parser('run', help='run the container')
+run_parser.add_argument('CONTAINER', help='the container to run')
+
+
+# parse the arguments
+if len(sys.argv)==1:
+    parser.print_help()
+    sys.exit(1)
+
 args = vars( parser.parse_args() )
+#print(args)
+
+if 'subparser_name' not in args:
+    parser.print_help()
+    sys.exit(1)
+
+subparser_name = args['subparser_name']
 
 
-jc = jsoncurl()
-jp = jsonprint()
-
-
-
-#json_data = jc.get_jsonparsed_data( args['URL'] )
-if args['extract_element']:
-    jp.pprint(json_data, args['extract_element'] )
+# parse the subparser / commands
+if subparser_name == 'build':
+    cmd = build()
+    cmd.build()
+elif subparser_name == 'install':
+    container_name = args['CONTAINER']
+    cmd = install()
+    cmd.install(container_name)
+elif subparser_name == 'run':
+    container_name = args['CONTAINER']
+    cmd = run()
+    cmd.run(container_name)
 else:
-    jp.pprint(json_data)
+    parser.print_help()
+    sys.exit(1)
 
