@@ -45,7 +45,8 @@ build_parser.add_argument('-d', '--directory', dest='directory', help='specify t
 install_parser = subparsers.add_parser('install', help='install a package')
 install_parser.add_argument('CONTAINER', help='the container to install')
 run_parser = subparsers.add_parser('run', help='run the container')
-run_parser.add_argument('CONTAINER', help='the container to run')
+run_parser.add_argument('-c', '--config-file', dest='config_file', help='specify the config file')
+#run_parser.add_argument('CONTAINER', help='the container to run')
 
 
 
@@ -70,25 +71,34 @@ def retrieveArgument(args, key, default=None):
 
 
 # parse the subparser / commands
-if subparser_name == 'build':
-    try:
-        directory = retrieveArgument(args, "directory", ".")
-        config_file = retrieveArgument(args, "config_file", "cp.json")
-        cmd = build()
-        cmd.build(directory, config_file)
-    except FileNotFoundError as fnfe:
-        LOGGER.error(fnfe)
-    except ValueError as ve:
-        LOGGER.error("error while parsin json file: %s" % ve)
-elif subparser_name == 'install':
-    container_name = args['CONTAINER']
-    cmd = install()
-    cmd.install(container_name)
-elif subparser_name == 'run':
-    container_name = args['CONTAINER']
-    cmd = run()
-    cmd.run(container_name)
-else:
-    parser.print_help()
-    sys.exit(1)
+try:
+    if subparser_name == 'build':
+        try:
+            directory = retrieveArgument(args, "directory", ".")
+            config_file = retrieveArgument(args, "config_file", "cp.json")
+            cmd = build()
+            cmd.build(directory, config_file)
+        except FileNotFoundError as fnfe:
+            LOGGER.error(fnfe)
+        except ValueError as ve:
+            LOGGER.error("error while parsin json file: %s" % ve)
+    elif subparser_name == 'install':
+        container_name = args['CONTAINER']
+        cmd = install()
+        cmd.install(container_name)
+    elif subparser_name == 'run':
+        try:
+            config_file = retrieveArgument(args, "config_file", "cp.json")
+            cmd = run()
+            cmd.run(config_file)
+        except FileNotFoundError as fnfe:
+            LOGGER.error(fnfe)
+        except ValueError as ve:
+            LOGGER.error("error while parsin json file: %s" % ve)
+    else:
+        parser.print_help()
+        sys.exit(1)
+
+except KeyboardInterrupt:
+    LOGGER.info("^C")
 
