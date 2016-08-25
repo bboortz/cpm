@@ -27,9 +27,11 @@ except ImportError:
 LOGGER = getLogger('cpm')
 
 
+
 #
 # * parse arguments *
 #
+
 
 
 # define the parser arguments
@@ -46,6 +48,7 @@ run_parser = subparsers.add_parser('run', help='run the container')
 run_parser.add_argument('CONTAINER', help='the container to run')
 
 
+
 # parse the arguments
 if len(sys.argv)==1:
     parser.print_help()
@@ -57,24 +60,22 @@ LOGGER.debug(args)
 if 'subparser_name' not in args:
     parser.print_help()
     sys.exit(1)
-
 subparser_name = args['subparser_name']
 
 
-def retrieveArgument(args, arg_name):
-    if arg_name in args:
-        return args[arg_name]
-    else:
-        return None
-
+def retrieveArgument(args, key, default=None):
+    if key not in args  or  args[key] == None:
+        return default
+    return args[key]
 
 
 # parse the subparser / commands
 if subparser_name == 'build':
     try:
-        config_file = retrieveArgument(args, "config_file")
+        directory = retrieveArgument(args, "directory", ".")
+        config_file = retrieveArgument(args, "config_file", "cp.json")
         cmd = build()
-        cmd.build(config_file=config_file)
+        cmd.build(directory, config_file)
     except FileNotFoundError as fnfe:
         LOGGER.error(fnfe)
     except ValueError as ve:

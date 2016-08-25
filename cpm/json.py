@@ -9,8 +9,7 @@ class jsonUtil(object):
 
     def readJson(self, file):
 
-
-        with open(file) as data_file:    
+        with open(file) as data_file:
                 json_data = json.load(data_file)
 
         return json_data
