@@ -1,0 +1,21 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	
+	"definitions": {
+		"cpJson": {
+			"type": "object",
+			"properties": {
+				"packageName":		{ "type": "string" },
+				"packageVersion":	{ "type": "string" },
+				"containerType":	{ "type": "string" }
+			},
+			"required": ["packageName", "packageVersion", "containerType"]
+		}
+	},
+	
+	"type": "object",
+	
+	"properties": {
+		"cpJson": { "$ref": "#/definitions/cpJson" }
+	}
+}
